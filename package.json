@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "cypress": "^13.7.2",
+    "google-spreadsheet": "^3.2.0",
+    "moment": "^2.29.1",
+    "webdriverio": "^8.39.00"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.4",
+    "@types/node": "20.11.5"
+  },
+  "scripts": {
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix"
+  }
+}

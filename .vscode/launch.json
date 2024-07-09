@@ -1,0 +1,14 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		
+		{
+			"type": "pwa-node",
+			"request": "launch",
+			"name": "Launch Program",
+			"skipFiles": ["<node_internals>/**"],
+			// ${file} 的意思是，当我们启动调试的时候，调试的程序就是当前 focus 的文件。
+			"program": "${file}"
+		}
+	]
+}
