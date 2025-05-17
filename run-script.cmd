@@ -1,3 +1,2 @@
-nvm use 20.12.0
-node C:/personal-dev/housing-market-trend/src/task.js
-
+nvm use 22.13.1
+node C:/dev-personal/housing-market-trend/src/task.js

@@ -22,11 +22,21 @@ String.prototype.getNumber = function () {
 	const getTotalCount = async (location) => {
 		await browser.url(location)
 		
+		// 等待元素存在
+	const elementSelector = 'h3.tm-search-header-result-count__heading.ng-star-inserted';
+	await browser.waitUntil(
+			async () => await browser.$(elementSelector).isExisting(),
+			{
+					timeout: 30000, 
+					timeoutMsg: `Element with selector "${elementSelector}" was not found`
+			}
+	);
 
-		return new Promise((resolve, reject) => {
-			browser
-				.$('h3.tm-search-header-result-count__heading.ng-star-inserted')
-				.getText()
+	// 获取元素文本
+	const elementText = browser.$(elementSelector).getText();
+
+		return new Promise((resolve) => {
+			elementText
 				.then((text) => {
 					resolve(text.getNumber())
 				})
@@ -55,18 +65,31 @@ String.prototype.getNumber = function () {
 			'goog:chromeOptions': {
 				// to run chrome headless the following flags are required
 				// (see https://developers.google.com/web/updates/2017/04/headless-chrome)
-				args: ['--headless', '--disable-gpu'],
+				// args: ['--headless', '--disable-gpu'], //无需浏览器
+				args: ['--headed', '--disable-gpu'], //会自动打开浏览器
 			},
 		},
 	})
 
+	console.log("fetching All NZ")
 	const AllNZTotalCount = await getTotalCount(AllNZ)
+
+	console.log("fetching All Wellington")
 	const WellingtonTotalCount = await getTotalCount(AllWellington)
+
+	console.log("fetching Center Wellington")
 	const CenterWellingtonTotalCount = await getTotalCount(CenterWellington)
+
 	// const GirlsCollegeAreaTotalCount = await getTotalCount(GirlsCollegeArea)
+	console.log("fetching Lower Hutt")
 	const LowerHuttTotalCount = await getTotalCount(LowerHutt)
+
+	console.log("fetching Christchurch City")
 	const ChristchurchCityTotalCount = await getTotalCount(ChristchurchCity)
+
+	console.log("fetching Auckland")
 	const AllAucklandTotalCount = await getTotalCount(AllAuckland)
+	
 
 	// close the browser automatically
 	await browser.deleteSession()
