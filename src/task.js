@@ -2,9 +2,16 @@ const { GoogleSpreadsheet } = require('google-spreadsheet')
 const creds = require('../credentials.json')
 const { remote } = require('webdriverio')
 const moment = require('moment')
+const { JWT } = require('google-auth-library')
+
+const serviceAccountAuth = new JWT({
+	email: creds.client_email,
+	key: creds.private_key,
+	scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+})
 
 const doc = new GoogleSpreadsheet(
-	'1WrhE1sPdMXXn1OCSWkTE4aFgXLE9U73DZ4Y_IlUuWZM'
+	'1WrhE1sPdMXXn1OCSWkTE4aFgXLE9U73DZ4Y_IlUuWZM', serviceAccountAuth
 )
 
 const AllNZ = `https://www.trademe.co.nz/a/property/residential/sale/search?bof=Rk71pvsW`
@@ -23,7 +30,7 @@ String.prototype.getNumber = function () {
 		await browser.url(location)
 		
 		// 等待元素存在
-	const elementSelector = 'h3.tm-search-header-result-count__heading.ng-star-inserted';
+	const elementSelector = 'h3.tm-search-header-result-count__heading';
 	await browser.waitUntil(
 			async () => await browser.$(elementSelector).isExisting(),
 			{
@@ -49,14 +56,12 @@ String.prototype.getNumber = function () {
 		})
 	}
 
-	await doc.useServiceAccountAuth(creds)
-
 	await doc.loadInfo()
 
 	const sheet = doc.sheetsByTitle['Sheet1']
 	const rows = await sheet.getRows()
 	const lastRow = rows[rows.length - 1]
-	const lastDate = moment(lastRow.date, 'YYYY-MM-DD')
+	const lastDate = moment(lastRow.get('date'), 'YYYY-MM-DD')
 	const today = moment(new Date())
 
 	const browser = await remote({
@@ -65,8 +70,8 @@ String.prototype.getNumber = function () {
 			'goog:chromeOptions': {
 				// to run chrome headless the following flags are required
 				// (see https://developers.google.com/web/updates/2017/04/headless-chrome)
-				// args: ['--headless', '--disable-gpu'], //无需浏览器
-				args: ['--headed', '--disable-gpu'], //会自动打开浏览器
+				args: ['--headless', '--disable-gpu'], //无需浏览器
+				// args: ['--headed', '--disable-gpu'], //会自动打开浏览器
 			},
 		},
 	})
